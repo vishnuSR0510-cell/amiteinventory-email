@@ -21,6 +21,36 @@ db.connect(err => {
     console.error('❌ DB Connection Failed:', err);
   } else {
     console.log('✅ Connected to MySQL');
+    db.connect(err => {
+  if (err) {
+    console.error('❌ DB Connection Failed:', err);
+  } else {
+    console.log('✅ Connected to MySQL');
+
+    // ✅ Auto-create the table if it doesn't exist
+    const createTableQuery = `
+      CREATE TABLE IF NOT EXISTS enquiries (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(100),
+        type VARCHAR(50),
+        regno VARCHAR(50),
+        phone VARCHAR(15),
+        email VARCHAR(100),
+        queries TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `;
+
+    db.query(createTableQuery, (err, result) => {
+      if (err) {
+        console.error("❌ Failed to create table:", err);
+      } else {
+        console.log("✅ enquiries table is ready (or already exists).");
+      }
+    });
+  }
+});
+
   }
 });
 
