@@ -65,6 +65,8 @@ const transporter = nodemailer.createTransport({
 
 // Enquiry endpoint
 app.post("/send-email", (req, res) => {
+  console.log("📩 Received data:", req.body);
+
   const { name, type, regno, phone, email, queries } = req.body;
 
   // Save to DB
@@ -98,18 +100,19 @@ app.post("/send-email", (req, res) => {
 
     // Thank-you mail to customer
     const customerMail = {
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: "✅ Amite Invent-ory - Enquiry Received",
-      html: `
-        <h3>Dear ${name},</h3>
-        <p>Thank you for reaching out to <strong>Amite Invent-ory</strong>.</p>
-        <p>We’ve received your enquiry and will respond soon.</p>
-        <p><strong>Your Query:</strong> ${queries}</p>
-        <p>📞 Call us at <strong>+91 9176860553</strong> if urgent.</p>
-        <p>Best regards,<br>Team Amite Invent-ory</p>
-      `
-    };
+  from: process.env.EMAIL_USER,
+  to: email || process.env.EMAIL_TO, // fallback if email is missing
+  subject: "✅ Amite Invent-ory - Enquiry Received",
+  html: `
+    <h3>Dear ${name},</h3>
+    <p>Thank you for reaching out to <strong>Amite Invent-ory</strong>.</p>
+    <p>We’ve received your enquiry and will respond soon.</p>
+    <p><strong>Your Query:</strong> ${queries}</p>
+    <p>📞 Call us at <strong>+91 9176860553</strong> if urgent.</p>
+    <p>Best regards,<br>Team Amite Invent-ory</p>
+  `
+};
+
 
     try {
       await transporter.sendMail(adminMail);
